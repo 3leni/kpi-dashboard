@@ -78,7 +78,7 @@ def get_kpis_by_category(category: str, db: Session = Depends(get_db)):
     kpis = KPIService.get_kpis_by_category(db, category)
     return kpis
 
-@router.get("/stats/summary")
+@router.get("/stats/summary") 
 def get_kpi_summary( db:Session = Depends(get_db)):
     """
     Obtener resumen de KPIs

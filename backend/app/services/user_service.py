@@ -37,7 +37,7 @@ class UserService:
         db.refresh(db_user)
         return db_user
     
-    @staticmethod
+    @staticmethod 
     def update_user(db: Session, user_id: int, user: UserUpdate):
         db_user = UserService.get_user_by_id(db, user_id)
         if not db_user:

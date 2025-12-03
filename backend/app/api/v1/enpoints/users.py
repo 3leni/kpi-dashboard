@@ -46,7 +46,7 @@ def get_user_id(user_id: int, db:Session = Depends(get_db)):
 def udpate_user(user_id: int, user_update: UserUpdate, db: Session =  Depends(get_db)):
     """
     Actualizar un usuario
-    """
+    """ 
     user = UserService.update_user(db, user_id, user_update)
     if not user:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
