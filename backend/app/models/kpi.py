@@ -7,7 +7,7 @@ class KPI(Base):
     __tablename__ = "kpis"
 
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String(255), nullable=False)
+    title = Column(String(255), nullable=False) 
     description = Column(Text)
     current_value = Column(Float)
     target_value = Column(Float)

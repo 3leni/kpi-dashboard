@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from app.database.database import Base
 
 class Departaments(Base):
-    __tablename__ = "departaments"
+    __tablename__ = "departaments" 
 
     id = Column(Integer, primary_key=True, index=True )
     name = Column(String(255), nullable=False )

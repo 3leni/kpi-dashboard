@@ -20,7 +20,7 @@ class KPIResponse(KPIBase):
     id: int
     created_by: int
     created_at: datetime
-    updated_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None 
 
     class Config:
         from_attributes = True
