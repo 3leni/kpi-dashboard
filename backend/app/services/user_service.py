@@ -25,6 +25,16 @@ class UserService:
         return db.query(User).filter(User.id == user_id).first()
     
     @staticmethod
+    def authenticate_user(db: Session, email: str, password: str):
+        """Autenticar usuario con email y contraseña"""
+        user = UserService.get_user_by_email(db, email)
+        if not user:
+            return None
+        if not UserService.verify_password(password, user.hashed_password):
+            return None
+        return user
+
+    @staticmethod
     def create_user(db: Session, user: UserCreate):
         hashed_password = UserService.get_password_hash(user.password)
         db_user = User(
@@ -74,3 +84,4 @@ class UserService:
     @staticmethod
     def get_users(db: Session, skip: int = 0, limit: int = 100):
         return db.query(User).offset(skip).limit(limit).all()
+    
