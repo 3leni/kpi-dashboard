@@ -7,9 +7,7 @@ from app.models import user, kpi, departament  # Importar modelos para que se cr
 from app.models.user import Base
 from app.api.v1.enpoints import kpis, users, auth
 # Crear tablas en la base de datos
-user.Base.metadata.create_all(bind=engine)
-kpi.Base.metadata.create_all(bind=engine)
-departament.Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="KPI Dashboard API",
