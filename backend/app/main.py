@@ -5,7 +5,7 @@ from sqlalchemy import text, inspect
 from app.database.database import engine, get_db
 from app.models import user, kpi, departament  # Importar modelos para que se creen las tablas
 from app.models.user import Base
-from app.api.v1.enpoints import kpis, users
+from app.api.v1.enpoints import kpis, users, auth
 # Crear tablas en la base de datos
 user.Base.metadata.create_all(bind=engine)
 kpi.Base.metadata.create_all(bind=engine)
@@ -26,6 +26,7 @@ app.add_middleware(
 )
 
 # Incluir routers
+app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
 app.include_router(users.router, prefix="/api/v1/users", tags=["users"])
 app.include_router(kpis.router, prefix="/api/v1/kpis", tags=["kpis"])
 

@@ -6,6 +6,7 @@ class UserBase(BaseModel):
     email: EmailStr
     full_name: Optional[str] = None
     is_active: Optional[bool] = True
+    is_demo_user: bool = False
 
 # Esquema para crear usuario
 class UserCreate(UserBase):

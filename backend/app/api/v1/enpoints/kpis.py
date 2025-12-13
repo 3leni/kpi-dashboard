@@ -6,12 +6,14 @@ from typing import List
 from app.database.database import get_db
 from app.schemas.kpi import KPIResponse, KPICreate
 from app.services.kpi_service import KPIService
+from app.api.v1.deps import get_current_user, verify_not_demo_user
+from app.models.user import User
 
 router = APIRouter()
 
 # GET /api/v1/kpis - Obtener todos los KPIs
 @router.get("/", response_model=List[KPIResponse])
-def get_kpis(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def get_kpis(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """
     Obtener todos los KPIs con paginación
     """
@@ -33,16 +35,16 @@ def get_kpi(kpi_id: int, db: Session = Depends(get_db)):
     return kpi
 
 # POST /api/v1/kpis - Crear nuevo KPI
-@router.post("/", response_model=KPIResponse)
-def create_kpi(kpi: KPICreate, db: Session = Depends(get_db)):
+@router.post("/", response_model=KPIResponse, dependencies=[Depends(verify_not_demo_user)])
+def create_kpi(kpi: KPICreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """
     Crear un nuevo KPI
     """
     # Por ahora usamos user_id 1 como demo - luego implementaremos autenticación
-    return KPIService.create_kpi(db, kpi, user_id=1)
+    return KPIService.create_kpi(db, kpi, user_id=current_user.id)
 
 # PUT /api/v1/kpis/{kpi_id} - Actualizar KPI
-@router.put("/{kpi_id}", response_model=KPIResponse)
+@router.put("/{kpi_id}", response_model=KPIResponse, dependencies=[Depends(verify_not_demo_user)])
 def update_kpi(kpi_id: int, kpi_update: KPICreate, db: Session = Depends(get_db)):
     """
     Actualizar un KPI existente
@@ -56,7 +58,7 @@ def update_kpi(kpi_id: int, kpi_update: KPICreate, db: Session = Depends(get_db)
     return kpi
 
 # DELETE /api/v1/kpis/{kpi_id} - Eliminar KPI
-@router.delete("/{kpi_id}")
+@router.delete("/{kpi_id}", dependencies=[Depends(verify_not_demo_user)])
 def delete_kpi(kpi_id: int, db: Session = Depends(get_db)):
     """
     Eliminar un KPI

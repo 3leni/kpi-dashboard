@@ -23,7 +23,7 @@ def get_current_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    user_id : int = payload.get("user_id")
+    user_id  = payload.get("user_id")
     if user_id is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -54,3 +54,19 @@ def get_current_user_optional(
         return get_current_user(credentials, db)
     except HTTPException:
         return None
+    
+def get_admin_user(current_user = Depends(get_current_user)):
+    if current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="No admin user",
+        )
+    return current_user
+
+def verify_not_demo_user(current_user = Depends(get_current_user)):
+    if current_user.is_demo_user:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="No demo user",
+        )
+    return current_user

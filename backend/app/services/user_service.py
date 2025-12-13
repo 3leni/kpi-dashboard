@@ -1,4 +1,5 @@
 # backend/app/services/user_service.py
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from app.models.user import User
 from app.schemas.user import UserCreate, UserUpdate
@@ -36,12 +37,36 @@ class UserService:
 
     @staticmethod
     def create_user(db: Session, user: UserCreate):
+        psw = user.password
+        if not user.is_demo_user:
+            errors = []
+            if len(psw) < 8:
+                errors.append("Password must be at least 8 characters")
+            isuppers = any(c.isupper() for c in psw)
+            islowers = any(c.islower() for c in psw)
+            isdigits = any(c.isdigit() for c in psw)
+            symbols = set("!@#$%^&*()_+{}|:<>?,./;'[]-=")
+            has_symbols = any(c in symbols for c in psw)
+            if not isuppers:
+                errors.append("Password must contain at least one uppercase letter")
+            if not islowers:
+                errors.append("Password must contain at least one lowercase letter")
+            if not isdigits:
+                errors.append("Password must contain at least one digit")
+            if not has_symbols:
+                errors.append("Password must contain at least one symbol")
+            if len(errors) > 0:
+                raise HTTPException(
+                    status_code=400,
+                    detail=", ".join(errors),
+                )
         hashed_password = UserService.get_password_hash(user.password)
         db_user = User(
-            email=user.email,
-            hashed_password=hashed_password,
-            full_name=user.full_name
-        )
+                email=user.email,
+                hashed_password=hashed_password,
+                full_name=user.full_name,
+                is_demo_user=user.is_demo_user
+            )
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
